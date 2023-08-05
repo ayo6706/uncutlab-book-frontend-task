@@ -3,14 +3,18 @@ if (jwt != null) {
   window.location.href = './index.html'
 }
 
-function login() {
+function register() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const firstname = document.getElementById("firstname").value;
+  const lastname = document.getElementById("lastname").value;
 
   const xhttp = new XMLHttpRequest();
   xhttp.open("POST", "https://www.mecallapi.com/api/v1/user/login");
   xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhttp.send(JSON.stringify({
+    "firstname": firstname,
+    "lastname": lastname,
     "email": email,
     "password": password
   }));
