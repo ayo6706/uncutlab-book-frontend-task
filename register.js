@@ -10,7 +10,7 @@ function register() {
   const lastname = document.getElementById("lastname").value;
 
   const xhttp = new XMLHttpRequest();
-  xhttp.open("POST", "https://www.mecallapi.com/api/v1/user/login");
+  xhttp.open("POST", "https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/user/register");
   xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhttp.send(JSON.stringify({
     "firstname": firstname,

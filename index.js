@@ -1,11 +1,11 @@
 var jwt = localStorage.getItem("jwt");
-if (jwt == null) {
-  window.location.href = './login.html'
-}
+// if (jwt == null) {
+//   window.location.href = './login.html'
+// }
 
 function loadUser() {
   const xhttp = new XMLHttpRequest();
-  xhttp.open("GET", "https://www.mecallapi.com/api/v1/user/login");
+  xhttp.open("GET", "https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/user/login");
   xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhttp.setRequestHeader("Authorization", "Bearer "+jwt);
   xhttp.send();
