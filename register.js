@@ -20,7 +20,6 @@ async function register(event) {
     });
 
     const data = await response.json();
-    console.log(data)
 
     if (data.success) {
       localStorage.setItem("jwt", data.data.token);
