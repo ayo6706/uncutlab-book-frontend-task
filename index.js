@@ -42,7 +42,7 @@ async function loadUser() {
 
   try {
     const jwt = localStorage.getItem("jwt");
-    const response = await fetch("https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/book", {
+    const response = await fetch("https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/book/find", {
       headers: {
         "Content-Type": "application/json;charset=UTF-8",
         "Authorization": `Bearer ${jwt}`,
