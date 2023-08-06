@@ -1,46 +1,53 @@
-var jwt = localStorage.getItem("jwt");
-if (jwt != null) {
-  window.location.href = './index.html'
-}
-
-function register() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+async function register(event) {
+  event.preventDefault(); // Prevent the form from submitting normally
   const firstname = document.getElementById("firstname").value;
   const lastname = document.getElementById("lastname").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  const xhttp = new XMLHttpRequest();
-  xhttp.open("POST", "https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/user/register");
-  xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhttp.send(JSON.stringify({
-    "firstname": firstname,
-    "lastname": lastname,
-    "email": email,
-    "password": password
-  }));
-  xhttp.onreadystatechange = function () {
-    if (this.readyState == 4) {
-      const objects = JSON.parse(this.responseText);
-      console.log(objects);
-      if (objects['status'] == 'ok') {
-        localStorage.setItem("jwt", objects['token']);
-        Swal.fire({
-          text: objects['message'],
-          icon: 'success',
-          confirmButtonText: 'OK'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = './index.html';
-          }
-        });
-      } else {
-        Swal.fire({
-          text: objects['message'],
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-      }
+  try {
+    const response = await fetch("https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/user/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstname,
+        lastname,
+        email,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data)
+
+    if (data.success) {
+      localStorage.setItem("jwt", data.data.token);
+      Swal.fire({
+        text: data.message,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = './index.html';
+        }
+      });
+    } else {
+      Swal.fire({
+        text: data.message,
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     }
-  };
+  } catch (error) {
+    console.error("Error during registration:", error);
+    Swal.fire({
+      text: "An error occurred during registration.",
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+  }
+
   return false;
 }
