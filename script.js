@@ -1,3 +1,13 @@
+// JavaScript
+function redirectIfJwtAbsent() {
+  var jwt = localStorage.getItem("jwt");
+  if (jwt == null) {
+    window.location.href = './login.html';
+    return false; // Exit the function to prevent further execution
+  }
+  return true; // Token is present, continue
+}
+
 function showBookCreateBox() {
     Swal.fire({
       title: "Add Book",
@@ -12,27 +22,36 @@ function showBookCreateBox() {
     });
   }
   
-  function bookCreate() {
+  async function bookCreate() {
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
   
-    const xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/book");
-    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhttp.send(
-      JSON.stringify({
-        title: title,
-        author: author,
-      })
-    );
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4 && this.status == 200) {
-        const objects = JSON.parse(this.responseText);
-        Swal.fire(objects["message"]);
-        loadTable();
+    try {
+      const response = await fetch("https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Authorization": "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify({
+          title: title,
+          author: author,
+        }),
+      });
+  
+      if (!response.ok) {
+        console.error("Error: Unable to create the book.");
+        return;
       }
-    };
+  
+      const data = await response.json();
+      Swal.fire(data["message"]);
+      loadTable();
+    } catch (error) {
+      console.error("Error: Unable to create the book.", error);
+    }
   }
+  
 
 
   function showBookEditBox(id) {
@@ -128,20 +147,29 @@ function showBookCreateBox() {
   loadTable();
 
 
-  function bookDelete(id) {
-    const xhttp = new XMLHttpRequest();
-    xhttp.open("DELETE", "https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/book");
-    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhttp.send(
-      JSON.stringify({
-        id: id,
-      })
-    );
-    xhttp.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        const objects = JSON.parse(this.responseText);
-        Swal.fire(objects["message"]);
-        loadTable();
+  async function bookDelete(id) {
+    if (!redirectIfJwtAbsent()) {
+      return; // Exit if JWT is absent
+    }
+    try {
+      const jwt = localStorage.getItem("jwt");
+      const response = await fetch(`https://ayomide-unstacklab-book-backend.up.railway.app/api/v1/book?id=${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8",
+          "Authorization": `Bearer ${jwt}`,
+        },
+      });
+  
+      if (!response.ok) {
+        console.error("Error: Unable to delete the book.");
+        return;
       }
-    };
+  
+      const data = await response.json();
+      Swal.fire(data["message"]);
+      loadTable();
+    } catch (error) {
+      console.error("Error: Unable to delete the book.", error);
+    }
   }
